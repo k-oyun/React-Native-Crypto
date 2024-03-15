@@ -3,7 +3,8 @@ import styled from "styled-components";
 import {coins} from "../api";
 import {BLACK_COLOR} from "../colors";
 import {useQuery} from "react-query";
-import {ActivityIndicator, FlatList} from "react-native";
+import {ActivityIndicator, FlatList, View} from "react-native";
+import Coin from "../components/Coin";
 
 const Container = styled.View`
   background-color: ${BLACK_COLOR};
@@ -16,15 +17,11 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const Coin = styled.View`
-  align-items: center;
+const List = styled.FlatList`
+  padding: 20px 10px;
+  width: 100%;
 `;
-const CoinName = styled.Text`
-  color: white;
-`;
-const CoinSymbol = styled.Text`
-  color: white;
-`;
+
 const Home = () => {
   const {isLoading, data} = useQuery("coins", coins);
   const [cleanData, setCleanData] = useState([]);
@@ -45,15 +42,19 @@ const Home = () => {
   }
   return (
     <Container>
-      <FlatList
+      <List
         data={cleanData}
-        numColumns={5}
+        ItemSeparatorComponent={() => <View style={{height: 10}} />}
+        //column의 수
+        //column을 정한만큼 view가 감싸고 있음
+        numColumns={3}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+        }}
+        //item을 받아서 item의 id를 리턴해줌
         keyExtractor={(item) => item.id}
-        renderItem={({item}) => (
-          <Coin>
-            <CoinName>{item.name}</CoinName>
-            <CoinSymbol>{item.symbol}</CoinSymbol>
-          </Coin>
+        renderItem={({item, index}) => (
+          <Coin index={index} symbol={item.symbol} id={item.id} />
         )}
       />
     </Container>
