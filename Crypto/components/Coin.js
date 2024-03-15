@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import React, {useEffect, useReducer, useRef} from "react";
-import {Animated, View} from "react-native";
+import React, {useEffect, useRef} from "react";
+import {Animated, TouchableOpacity, View} from "react-native";
+import {useNavigation} from "@react-navigation/native";
 
 //애니메이션을 줄 수 있는 컴포넌트
 const Wrapper = styled(Animated.createAnimatedComponent(View))`
@@ -18,7 +19,7 @@ const CoinSymbol = styled.Text`
   color: white;
 `;
 
-const Icon = styled.Image`
+export const Icon = styled.Image`
   width: 40px;
   height: 40px;
   border-radius: 20px;
@@ -26,6 +27,8 @@ const Icon = styled.Image`
 `;
 
 const Coin = ({symbol, id, index}) => {
+  //스크린에 있지 않고 컴포넌트에 있기 때문에 navigation 훅 사용
+  const navigation = useNavigation();
   const opacity = useRef(new Animated.Value(0)).current;
   //애니메이션 주기
   useEffect(() => {
@@ -42,14 +45,19 @@ const Coin = ({symbol, id, index}) => {
     outputRange: [0.7, 1],
   });
   return (
-    <Wrapper style={{flex: 0.31, opacity, transform: [{scale}]}}>
-      <Icon
-        source={{
-          uri: `https://static.coinpaprika.com/coin/${id}/logo.png`,
-        }}
-      />
-      <CoinName>{symbol}</CoinName>
-    </Wrapper>
+    <TouchableOpacity
+      style={{flex: 0.31}}
+      onPress={() => navigation.navigate("Detail", {symbol, id})}
+    >
+      <Wrapper style={{opacity, transform: [{scale}]}}>
+        <Icon
+          source={{
+            uri: `https://static.coinpaprika.com/coin/${id}/logo.png`,
+          }}
+        />
+        <CoinName>{symbol}</CoinName>
+      </Wrapper>
+    </TouchableOpacity>
   );
 };
 
